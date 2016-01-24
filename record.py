@@ -10,15 +10,19 @@ import datetime
 import signal
 import subprocess
 
+#GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
-pirPin = 7
+pirPin = 4
+ledPin = 12
 GPIO.setup(pirPin, GPIO.IN)
+GPIO.setup(ledPin, GPIO.OUT)
 cam = picamera.PiCamera()
 
 def getFileName():
 	return datetime.datetime.now().strftime("%y-%m-%d_%H.%M.%S")
 
 def motion(pirPin):
+	GPIO.output(ledPin, GPIO.HIGH)
 	print "Motion Detected"
 	fileName = getFileName()
 	print "Recording..."
@@ -31,20 +35,27 @@ def motion(pirPin):
 	subprocess.call(["MP4Box", "-fps", "30", "-add", fileName + ".h264",fileName + ".mp4"])
 	subprocess.call(["mv", fileName + ".mp4", "Recordings"]) 
 	print "Conversion complete"
+	GPIO.output(ledPin, GPIO.LOW)
+	print "Ready - (Press button to exit)"
 	print "Scanning..."
 
 print "CatCam is starting..."
 time.sleep(2)
-print "Ready - (CTRL+C to exit)"
 
 try:
+	print "Ready - (Press button to exit)"
 	print "Scanning..."
-	GPIO.add_event_detect(pirPin, GPIO.RISING, callback = motion)
+	GPIO.add_event_detect(pirPin, GPIO.RISING, callback = motion, bouncetime = 63000)
 	while 1:
-		time.sleep(60)
+		pass
+
 except KeyboardInterrupt:
-	print "\nCatCam is shutting down..."
-	time.sleep(2)
+	pass
+
+except:
+	pass
+
+finally:
 	GPIO.cleanup()
 	cam.close()
-	print "Goodbye"
+	print "CatCam closed properly"
