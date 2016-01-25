@@ -33,8 +33,9 @@ def motion(pirPin):
 
 	print "Converting file..."
 	subprocess.call(["MP4Box", "-fps", "30", "-add", fileName + ".h264",fileName + ".mp4"])
-	subprocess.call(["mv", fileName + ".mp4", "Recordings"]) 
+	subprocess.call(["mv", fileName + ".mp4", "Recordings"])
 	print "Conversion complete"
+	subprocess.call(["rm", fileName + ".h264"])
 	GPIO.output(ledPin, GPIO.LOW)
 	print "Ready - (Press button to exit)"
 	print "Scanning..."
@@ -46,16 +47,10 @@ try:
 	print "Ready - (Press button to exit)"
 	print "Scanning..."
 	GPIO.add_event_detect(pirPin, GPIO.RISING, callback = motion, bouncetime = 63000)
-	while 1:
+	while True:
 		pass
 
-except KeyboardInterrupt:
-	pass
-
-except:
-	pass
-
-finally:
+except OSError as e:
 	GPIO.cleanup()
 	cam.close()
 	print "CatCam closed properly"

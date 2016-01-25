@@ -23,7 +23,7 @@ def light(buttonPin):
 
 	if btnOn:
 		GPIO.output(ledPin, GPIO.HIGH)
-		args = ['python', 'record.py']
+		args = ["python", "record.py"]
 		global p
 		p = subprocess.Popen(args)
 
@@ -38,7 +38,6 @@ try:
 
 	GPIO.add_event_detect(buttonPin, GPIO.RISING, callback = light, bouncetime=300)
 	while True:
-
 		pass
 
 except KeyboardInterrupt():
@@ -48,5 +47,5 @@ except:
 	pass
 
 finally:
-	print "\n"
+	print ""
 	GPIO.cleanup()
